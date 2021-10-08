@@ -67,24 +67,20 @@ const partition = (arr, left, right) => {
     while (arr[i] < arr[sep]) {
       this.count += 3
       i += 1
-      this.count += 1
+      this.count += 2
     }
     while (arr[j] > arr[sep]) {
       this.count += 3
       j -= 1
-      this.count += 1
+      this.count += 2
     }
 
     // swap elements
     if (i <= j) {
-      this.count += 1
-      let swap = arr[j]
-      arr[j] = arr[i]
-      arr[i] = swap 
-      this.count += 3
+      [arr[i], arr[j]] = [arr[j], arr[i]]
       i += 1
       j -= 1
-      this.count += 2
+      this.count += 11
     }
   }
 
@@ -93,17 +89,16 @@ const partition = (arr, left, right) => {
 
 const quickHybridSort = (arr, k, left = 0, right = arr.length - 1) => {
   if (right - left) {
-    this.count += 1
+    this.count += 2
     if (right - left <= k) {
       this.count += 2
       return insertionSort(arr, left, right)
     } else if (left <= right) {
-      this.count += 1
+      this.count += 2
       const i = partition(arr, left, right)
       if (left < i - 1) {
-        this.count += 2
+        this.count += 3
         quickHybridSort(arr, k, left, i - 1)
-        this.count += 1
       }
       if (i < right) {
         this.count += 1
@@ -112,29 +107,30 @@ const quickHybridSort = (arr, k, left = 0, right = arr.length - 1) => {
     }
   }
 
-  this.count += 2
-
   return arr
 }
 
-const merge = (a, b) => {
-  const c = []
-  this.count += 1
-  while(a.length && b.length) {
-      this.count += 2
-      c.push(a[0] > b[0] ? b.shift() : a.shift())
-      this.count += 5
+const merge = (left, right) => {
+  const res = []
+
+  let i = 0
+  let j = 0
+  
+  this.count += 3
+  while (i < left.length && j < right.length) {
+    this.count += 5
+    if (left[i] < right[j]) {
+      res.push(left[i])
+      i += 1
+      this.count += 7
+    } else {
+      res.push(right[j])
+      j += 1
+      this.count += 4
+    }
   }
-  while (a.length) {
-      this.count += 1
-      c.push(a.shift())
-      this.count += 2
-    }
-    while (b.length) {
-      c.push(b.shift())
-      this.count += 3
-    }
-  return c
+
+  return [...res, ...left.slice(i), ...right.slice(j)]
 }
 
 const mergeHybridSort = (arr, k) => {
@@ -143,7 +139,7 @@ const mergeHybridSort = (arr, k) => {
     return arr
   } else if (arr.length < k) {
     this.count += 2
-    return insertionSort(arr, this.count)
+    return insertionSort(arr)
   }
 
   const sep = Math.floor(arr.length / 2)
@@ -155,26 +151,18 @@ const mergeHybridSort = (arr, k) => {
   return merge(leftPart, rightPart)
 }
 
-const insertionSort = arr => {
-  this.count += 1
-  for (let i = 1; i < arr.length; i++) {
+const insertionSort = (arr, left = 0, right = arr.length - 1) => {
+  this.count += 2
+  for (let i = left; i <= right; i += 1) {
     this.count += 3
-    const current = arr[i];
-    this.count += 2
-    let j = i;
-    this.count += 1
-    while (j > 0 && arr[j - 1] > current) {
-      this.count += 4
-      arr[j] = arr[j - 1];
-      this.count += 3
-      j--;
-      this.count += 1
+    for (let j = i; j > 0 && arr[j - 1] > arr[j]; j -= 1) {
+      [arr[j - 1], arr[j]] = [arr[j], arr[j - 1]]
+      this.count += 13
     }
-    arr[j] = current;
-    this.count += 1
   }
-  return arr;
-};
+
+  return arr
+}
 
 const config = {
   arrayCount: +process.argv[2],
